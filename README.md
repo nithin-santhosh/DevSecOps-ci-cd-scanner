@@ -30,7 +30,19 @@ This pipeline implements three distinct types of security scanning:
 *   **What it does:** Scans the Git commit history and current file states for inadvertently exposed secrets (API keys, passwords).
 *   **Vulnerabilities demonstrated:** Hardcoded AWS keys and database passwords in the source tree.
 
+### 4. Automated Alert System (Discord)
+*   **Tool:** [Ilshidur/action-discord](https://github.com/Ilshidur/action-discord)
+*   **What it does:** Simulates a modern Security Operations Center (SOC) workflow by "breaking the build" when critical vulnerabilities are found and instantly pinging a chat channel. Every pipeline is configured to send a webhook alert if the scanning job fails.
+
 ## How to use this project
+
+### 1. Setup the Discord Webhook
+To make the alert system work, you need to provide a Discord Webhook URL securely.
+1. In your Discord server, go to Server Settings -> Integrations -> Webhooks, and create a new Webhook. Copy its URL.
+2. In your GitHub repository, go to **Settings -> Secrets and variables -> Actions**.
+3. Create a new repository secret named exactly `DISCORD_WEBHOOK` and paste your URL as the value.
+
+### 2. Run the Pipelines
 
 To see the security pipelines in action:
 

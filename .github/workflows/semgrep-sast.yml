@@ -17,7 +17,13 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: "p/default"
-          # Optional: generate SARIF report for GitHub Code Scanning
-          # generateSarif: "1"
-        # We allow it to continue on error so the other steps and workflows can run.
-        continue-on-error: true
+          
+      - name: Send Discord Alert if Vulnerabilities Found
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: "DevSecOps Bot"
+          DISCORD_AVATAR: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+        with:
+          args: "🚨 **SAST Alert:** Semgrep detected critical vulnerabilities in the source code. Review the GitHub Actions logs immediately!"
