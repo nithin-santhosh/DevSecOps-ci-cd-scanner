@@ -1,5 +1,5 @@
 {
-  "name": "devsecops-vulnerable-app",
+  "name": "devsecops-ci-cd-scanner",
   "version": "1.0.0",
   "description": "Intentionally vulnerable app for DevSecOps pipeline demonstration",
   "main": "src/app.js",

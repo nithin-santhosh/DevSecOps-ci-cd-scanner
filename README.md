@@ -1,4 +1,4 @@
-# DevSecOps CI/CD Vulnerability Scanner Pipeline
+# DevSecOps-ci-cd-scanner
 
 This project demonstrates a fully functional DevSecOps CI/CD pipeline built using GitHub Actions. It showcases the integration of automated security testing directly into the software development lifecycle to "shift left" on security.
 
