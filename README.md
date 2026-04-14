@@ -1,71 +1,215 @@
-# DevSecOps-ci-cd-scanner
+# DevSecOps CI/CD Security Pipeline
 
-This project demonstrates a fully functional DevSecOps CI/CD pipeline built using GitHub Actions. It showcases the integration of automated security testing directly into the software development lifecycle to "shift left" on security.
-
-## Project Overview
-
-The repository contains a deliberately vulnerable Node.js/Express web application. The core of the project lies in the `.github/workflows` directory, which contains automated pipelines using industry-standard security tools. Every time code is pushed or a Pull Request is opened, these scanners run automatically.
-
-> **Warning:** The application (`src/app.js`) is intentionally designed with security flaws (OWASP Top 10) for demonstration purposes. **DO NOT** run or deploy this application in a production environment.
-
-## The Toolchain
-
-This pipeline implements three distinct types of security scanning:
-
-### 1. Static Application Security Testing (SAST)
-*   **Tool:** [Semgrep](https://semgrep.dev/)
-*   **Workflow:** `semgrep-sast.yml`
-*   **What it does:** Analyzes the application's source code (`src/app.js`) to find coding flaws.
-*   **Vulnerabilities demonstrated:** SQL Injection, OS Command Injection.
-
-### 2. Software Composition Analysis (SCA) & Container Scanning
-*   **Tool:** [Trivy](https://aquasecurity.github.io/trivy/)
-*   **Workflow:** `trivy-sca.yml`
-*   **What it does:** Scans the `package.json` for known vulnerabilities (CVEs) in third-party dependencies. It also builds the Docker image and scans the OS layers for vulnerabilities.
-*   **Vulnerabilities demonstrated:** Outdated `express` and `lodash` dependencies; outdated `node:14-alpine` Docker base image.
-
-### 3. Secret Scanning
-*   **Tool:** [TruffleHog](https://github.com/trufflesecurity/trufflehog)
-*   **Workflow:** `secret-scanning.yml`
-*   **What it does:** Scans the Git commit history and current file states for inadvertently exposed secrets (API keys, passwords).
-*   **Vulnerabilities demonstrated:** Hardcoded AWS keys and database passwords in the source tree.
-
-### 4. Automated Alert System (Discord)
-*   **Tool:** [Ilshidur/action-discord](https://github.com/Ilshidur/action-discord)
-*   **What it does:** Simulates a modern Security Operations Center (SOC) workflow by "breaking the build" when critical vulnerabilities are found and instantly pinging a chat channel. Every pipeline is configured to send a webhook alert if the scanning job fails.
-
-## How to use this project
-
-### 1. Setup the Discord Webhook
-To make the alert system work, you need to provide a Discord Webhook URL securely.
-1. In your Discord server, go to Server Settings -> Integrations -> Webhooks, and create a new Webhook. Copy its URL.
-2. In your GitHub repository, go to **Settings -> Secrets and variables -> Actions**.
-3. Create a new repository secret named exactly `DISCORD_WEBHOOK` and paste your URL as the value.
-
-### 2. Run the Pipelines
-
-To see the security pipelines in action:
-
-1.  Fork or clone this repository to your own GitHub account.
-2.  Navigate to the **Actions** tab on GitHub.
-3.  Because the workflows trigger on `push`, you will see the initial run of the pipelines. Let them finish.
-4.  Click on any of the workflow runs (e.g., "Semgrep SAST" or "Trivy SCA & Container Scan") to view the detailed logs.
-5.  Expand the steps in the logs to see the specific vulnerabilities identified by the tools.
-
-### Example Findings You Will See
-*   **Semgrep:** Warnings about directly manipulating strings for SQL queries and using `child_process.exec` with user-supplied input.
-*   **Trivy:** A table output listing CVEs associated with older versions of Lodash and Express, and OS-level vulnerabilities from the Alpine base image.
-*   **Trufflehog:** A report indicating that AWS Access Keys and dummy passwords were found in `src/app.js`.
-
-## Why this matters
-By implementing these checks in a CI/CD pipeline, security issues are caught *before* they are ever deployed or merged into the main application. This drastically reduces the cost and risk of fixing vulnerabilities later in the lifecycle.
+ Automated security testing using GitHub Actions — implementing **Shift-Left Security**
 
 ---
 
-## 🏆 Resume Highlights / Skills Demonstrated
-If you are reviewing this repository as part of a portfolio, here are the core concepts demonstrated:
-*   **"Shift-Left" Security:** Engineered a fully automated DevSecOps CI/CD pipeline using GitHub Actions to integrate continuous security testing into the software development lifecycle.
-*   **Static Application Security Testing (SAST):** Implemented Semgrep to automatically detect code-level vulnerabilities, such as OS Command Injection and SQL Injection.
-*   **Software Composition Analysis (SCA):** Integrated Aqua Trivy to scan and identify Common Vulnerabilities and Exposures (CVEs) in outdated dependencies and Docker container images.
-*   **Secret Management:** Configured TruffleHog secret scanning to actively monitor commit history and prevent the leakage of API keys and database credentials.
-*   **Automated Incident Response:** Hooked the pipeline directly into a webhook alerting system (Discord), simulating an automated SOC workflow by breaking the build and notifying the team instantly upon detecting critical issues.
+## Overview
+
+This project demonstrates a **real-world DevSecOps CI/CD pipeline** that integrates security directly into the software development lifecycle.
+
+It uses a **deliberately vulnerable Node.js/Express application** to simulate real-world vulnerabilities and detect them automatically during CI/CD execution.
+
+Every **push** and **pull request** triggers automated security scans to ensure vulnerabilities are identified early.
+
+> ⚠️ **Warning:** This application contains intentional vulnerabilities (OWASP Top 10) for educational purposes.  
+> **Do NOT deploy in production.**
+
+---
+
+## Key Highlights
+
+-  Fully automated **CI/CD security pipeline**
+-  Implements **Shift-Left Security**
+-  Detects vulnerabilities **before deployment**
+-  Simulates **SOC alerting workflow**
+-  Uses industry-standard security tools
+
+---
+
+## Pipeline Architecture
+
+```mermaid
+flowchart TD
+
+A[Developer] --> B[Push and Pull Request]
+B --> C[GitHub Actions CI CD]
+
+C --> D[SAST Scan - Semgrep]
+C --> E[SCA and Container Scan - Trivy]
+C --> F[Secret Scan - TruffleHog]
+
+D --> G[Security Evaluation]
+E --> G
+F --> G
+
+G -->|Pass| H[Pipeline Success]
+G -->|Fail| I[Pipeline Failed]
+
+I --> J[Discord Alert]
+```
+## Security Toolchain
+
+### 1. Static Application Security Testing (SAST)
+
+- **Tool:** Semgrep  
+- **Workflow:** `semgrep-sast.yml`  
+- **Purpose:** Analyze source code for vulnerabilities  
+
+**Findings:**
+- SQL Injection  
+- OS Command Injection  
+
+---
+
+### 2. Software Composition Analysis (SCA) & Container Scanning
+
+- **Tool:** Trivy  
+- **Workflow:** `trivy-sca.yml`  
+- **Purpose:**
+  - Scan dependencies for CVEs  
+  - Scan Docker images for OS vulnerabilities  
+
+**Findings:**
+- Vulnerable dependencies (`express`, `lodash`)  
+- Outdated Docker base image (`node:14-alpine`)  
+
+---
+
+### 3. Secret Scanning
+
+- **Tool:** TruffleHog  
+- **Workflow:** `secret-scanning.yml`  
+- **Purpose:** Detect exposed secrets in codebase and history  
+
+**Findings:**
+- Hardcoded AWS keys  
+- Database credentials  
+
+---
+
+### 4. Automated Alerting System
+
+- **Tool:** Discord Webhook  
+- **Action:** `Ilshidur/action-discord`  
+
+**Purpose:**
+- Fail pipeline on critical vulnerabilities  
+- Send real-time alerts to a Discord channel  
+
+---
+
+## Setup Instructions
+
+### 1️⃣ Configure Discord Webhook
+
+1. Go to: **Discord → Server Settings → Integrations → Webhooks**
+   
+3. Create a webhook and copy the URL  
+
+4. Add it to GitHub:**Settings → Secrets and variables → Actions**
+  
+5. Create a new secret:
+   #### Name: DISCORD_WEBHOOK
+   #### Value: your_webhook_url
+
+### 2️⃣ Run the Pipelines
+
+1. Fork or clone this repository
+```bash
+git clone https://github.com/nithin-santhosh/DevSecOps-ci-cd-scanner.git
+cd DevSecOps-ci-cd-scanner
+```
+2. Trigger the Pipeline
+
+  The CI/CD workflows are automatically triggered on:
+
+  - Push events
+  - Pull Requests
+
+  To trigger manually:
+
+  - Make a small code change
+  - Commit and push to the repository
+``` 
+git add .
+git commit -m "Trigger CI/CD pipeline"
+git push
+```
+3. Monitor Workflow Execution
+   
+   Go to the **Actions tab** in your repository:
+   
+   Select a workflow run:
+   - Semgrep SAST
+   - Trivy Scan
+   - Secret Scanning
+  
+    Click on a job to view detailed logs and findings
+
+5. Analyze Results
+
+    During execution, the pipeline will:
+  
+   - Identify vulnerabilities in code and dependencies
+   - Detect exposed secrets
+   - Evaluate severity levels
+
+    Outcomes:
+   
+   - Pass → No critical vulnerabilities found
+   - Fail → Critical issues detected → Alert triggered
+
+5. View Alerts (Optional)
+
+   If configured, failed pipelines will:
+   - Send real-time alerts via Discord Webhook
+   - Simulate a SOC incident response workflow
+
+6. Tip
+
+   To test detection capabilities:
+   - Introduce a dummy API key
+   - Use vulnerable dependencies
+   - Add unsafe code patterns
+
+   Then push changes to observe how each tool reacts.
+---
+
+## Example Findings
+
+| Tool        | Example Issue |
+|------------|-------------|
+| Semgrep     | Unsafe SQL queries |
+| Trivy       | Vulnerable dependencies (CVEs) |
+| TruffleHog  | Exposed API keys |
+
+---
+
+## Why This Project Matters
+
+Traditional security practices often occur late in development, increasing risk and cost.
+
+This project demonstrates how DevSecOps:
+
+- Integrates security into CI/CD pipelines  
+- Detects vulnerabilities early  
+- Reduces remediation cost  
+- Improves overall application security  
+
+---
+
+## Future Enhancements
+
+- Add **DAST (Dynamic Application Security Testing)**  
+- Integrate **SIEM (Wazuh / Splunk)**  
+- Add **Slack / Email alerts**  
+- Implement **Policy-as-Code (OPA)**  
+- Build a vulnerability dashboard  
+
+---
+
+
+## Support
+
+If you found this project useful, consider giving it a ⭐ on GitHub!
