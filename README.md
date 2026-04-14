@@ -59,3 +59,13 @@ To see the security pipelines in action:
 
 ## Why this matters
 By implementing these checks in a CI/CD pipeline, security issues are caught *before* they are ever deployed or merged into the main application. This drastically reduces the cost and risk of fixing vulnerabilities later in the lifecycle.
+
+---
+
+## 🏆 Resume Highlights / Skills Demonstrated
+If you are reviewing this repository as part of a portfolio, here are the core concepts demonstrated:
+*   **"Shift-Left" Security:** Engineered a fully automated DevSecOps CI/CD pipeline using GitHub Actions to integrate continuous security testing into the software development lifecycle.
+*   **Static Application Security Testing (SAST):** Implemented Semgrep to automatically detect code-level vulnerabilities, such as OS Command Injection and SQL Injection.
+*   **Software Composition Analysis (SCA):** Integrated Aqua Trivy to scan and identify Common Vulnerabilities and Exposures (CVEs) in outdated dependencies and Docker container images.
+*   **Secret Management:** Configured TruffleHog secret scanning to actively monitor commit history and prevent the leakage of API keys and database credentials.
+*   **Automated Incident Response:** Hooked the pipeline directly into a webhook alerting system (Discord), simulating an automated SOC workflow by breaking the build and notifying the team instantly upon detecting critical issues.
