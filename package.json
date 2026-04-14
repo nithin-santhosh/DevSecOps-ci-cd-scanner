@@ -1,0 +1,14 @@
+{
+  "name": "devsecops-vulnerable-app",
+  "version": "1.0.0",
+  "description": "Intentionally vulnerable app for DevSecOps pipeline demonstration",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "4.16.0",
+    "lodash": "4.17.15",
+    "mysql": "2.17.1"
+  }
+}
